@@ -4,6 +4,7 @@ using namespace std;
 
 struct edge {
     int to, cost;
+    edge() {}
     edge(int to, int cost) : to(to), cost(cost) {}
 };
 
