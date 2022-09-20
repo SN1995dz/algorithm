@@ -4,17 +4,17 @@ using namespace std;
 
 struct edge {
     int to, cost;
-    edge() {}
     edge(int to, int cost) : to(to), cost(cost) {}
 };
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
+    const int INF = 1e9;
     int n, m, S = ...;
-    vector<edge> G[n];
+    vector<vector<edge>> G(n);
     ... //edges
-    vector<int> d(n, 1e9);
+    vector<int> d(n, INF);
     d[S] = 0;
     priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
     pq.push(make_pair(0, S));
