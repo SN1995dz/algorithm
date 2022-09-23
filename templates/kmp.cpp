@@ -2,13 +2,14 @@
 
 using namespace std;
 
+// p[i] = max{x}->a[0..x-1]=a[i-x+1..i]
 template<typename T>
-vector<int> getP(const T& s) {
-    int n = s.size();
+vector<int> getP(const T& a) {
+    int n = a.size();
     vector<int> P(n, -1);
     for (int i = 1, j = -1; i < n; ++i) {
-        while (j >= 0 && s[j + 1] != s[i]) j = P[j];
-        if (s[j + 1] == s[i]) ++j;
+        while (j >= 0 && a[j + 1] != a[i]) j = P[j];
+        if (a[j + 1] == a[i]) ++j;
         P[i] = j;
     }
     return P;
