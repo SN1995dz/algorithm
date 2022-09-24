@@ -34,11 +34,16 @@ vector<int> kmp(const T& s, const T& p) {
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
-    string s, p;
-    cin >> s >> p;
-    vector<int> ans = kmp(s, p);
-    for (int i = 0; i < (int)ans.size(); ++i) {
-        cout << ans[i] << endl;
+    string a, b;
+    while (cin >> a >> b) {
+        string s = a + "$" + b;
+        vector<int> P = getP(s);
+        int ans = P[s.length() - 1] + 1;
+        if (ans) {
+            cout << s.substr(0, ans) << " " << ans << endl;
+        } else {
+            cout << ans << endl;
+        }
     }
     return 0;
 }
