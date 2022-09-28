@@ -4,13 +4,13 @@ using namespace std;
 
 struct node {
     // type -1 0
-    int val = -1;
+    int val = 0;
     bool put = false;
 
     // type
     void apply(int l, int r, int v) {
         // = +=
-        val = v;
+        val += v;
         put = true;
     }
 };
@@ -21,7 +21,7 @@ class segtree {
         node unite(const node &a, const node &b) {
             node res;
             // max a+b
-            res.val = max(a.val, b.val);
+            res.val = min(a.val, b.val);
             return res;
         }
 
@@ -148,7 +148,7 @@ class segtree {
             pull(x, z);
             return res;
         }
-    
+
     public:
         segtree(int _n) : n(_n) {
             assert(n > 0);
@@ -197,30 +197,30 @@ class segtree {
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
-    int n, m;
-    cin >> n >> m;
-    vector<int> a(n);
-    for (int i = 0; i < n; ++i) cin >> a[i];
-    segtree<int> st(a);
-    while (m--) {
-        string op;
-        cin >> op;
-        if (op[0] == 'Q') {
-            int l, r;
-            cin >> l >> r;
-            cout << st.get(l, r) << endl;
-        } else if (op[0] == 'U') {
-            int p, v;
-            cin >> p >> v;
-            st.modify(p, v);
-        } else {
+    int h, w, n;
+    //while (cin >> h >> w >> n) {
+    while (~scanf("%d%d%d", &h, &w, &n)) {
+        h = min(h, n);
+        segtree<int> st(h);
+        for (int i = 0; i < n; ++i) {
             int x;
-            cin >> x;
-            function<bool(const node&)> f = [&](const node &u) {
-                return u.val <= x;
-            };
-            int p = st.find_first(0, n - 1, f);
-            cout << p << endl;
+            //cin >> x;
+            scanf("%d", &x);
+            //if (x > w) cout << -1 << endl;
+            if (x > w) printf("-1\n");
+            else {
+                function<bool(const node&)> f = [&](const node &u) {
+                    return u.val <= w - x;
+                };
+                int p = st.find_first(0, h - 1, f);
+                //if (p == -1) cout << -1 << endl;
+                if (p == -1) printf("-1\n");
+                else {
+                    //cout << p + 1 << endl;
+                    printf("%d\n", p + 1);
+                    st.modify(p, x);
+                }
+            }
         }
     }
     return 0;
