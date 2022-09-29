@@ -1,4 +1,6 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
+#include <cassert>
 
 using namespace std;
 
@@ -30,18 +32,17 @@ template<typename T> class fenwick {
             return result;
         }
 
-        T get(int ll, int rr) {
-            assert(0 <= ll && ll <= rr && rr < n);
-            if (ll == 0) return get(rr);
-            return get(rr) - get(ll - 1);
+        T get(int l, int r) {
+            assert(0 <= l && l <= r && r < n);
+            if (l == 0) return get(r);
+            return get(r) - get(l - 1);
         }
 
-        // v+1->v : v-th->next(v)
-        int binary_search(int ll, int rr, T v) {
-            int l = ll, r = rr, res = -1;
+        int binary_search(T v) {
+            int l = 0, r = n - 1, res = -1;
             while (l <= r) {
                 int mid = (l + r) / 2;
-                if (get(ll, mid) >= v + 1) {
+                if (get(mid) >= v + 1) {
                     res = mid;
                     r = mid - 1;
                 } else {
@@ -52,20 +53,24 @@ template<typename T> class fenwick {
         }
 };
 
+
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     int n;
-    cin >> n;
-    fenwick<int> fenw(n);
-    for (int i = 0; i < n; ++i) fenw.modify(i, 1);
-    for (int i = 0; i < n; ++i) {
-        int p;
-        cin >> p;
-        int tmp = fenw.binary_search(0, n - 1, p);
-        assert(tmp != -1);
-        cout << tmp << endl;
-        fenw.modify(tmp, -1);
+    while (cin >> n) {
+        vector<int> p(n), v(n);
+        for (int i = 0; i < n; ++i) cin >> p[i] >> v[i];
+        fenwick<int> fenw(n);
+        for (int i = 0; i < n; ++i) fenw.modify(i, 1);
+        vector<int> ans(n);
+        for (int i = n - 1; i >= 0; --i) {
+            int tmp = fenw.binary_search(p[i]);
+            ans[tmp] = v[i];
+            assert(tmp != -1);
+            fenw.modify(tmp, -1);
+        }
+        for (int i = 0; i < n; ++i) cout << ans[i] << (i == n - 1 ? '\n' : ' ');
     }
     return 0;
 }

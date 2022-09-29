@@ -2,25 +2,20 @@
 
 using namespace std;
 
-struct node {
-    // type -1 0
-    int val = -1;
-    bool put = false;
-
-    // type
-    void apply(int l, int r, int v) {
-        // = +=
-        val = v;
-        put = true;
-    }
-};
-
-template<typename T>
 class segtree {
-    private:
+    public:
+        struct node {
+            int val = -1;
+            bool put = false;
+
+            void apply(int l, int r, int v) {
+                val = v;
+                put = true;
+            }
+        };
+
         node unite(const node &a, const node &b) {
             node res;
-            // max a+b
             res.val = max(a.val, b.val);
             return res;
         }
@@ -51,6 +46,7 @@ class segtree {
             pull(x, z);
         }
 
+        template<typename T>
         void build(int x, int l, int r, const vector<T> &v) {
             if (l == r) {
                 tree[x].apply(l, r, v[l]);
@@ -64,7 +60,9 @@ class segtree {
         }
 
         node get(int x, int l, int r, int ll, int rr) {
-            if (ll <= l && r <= rr) return tree[x];
+            if (ll <= l && r <= rr) {
+                return tree[x];
+            }
             int y = (l + r) >> 1;
             int z = x + ((y - l + 1) << 1);
             push(x, l, r);
@@ -81,7 +79,8 @@ class segtree {
             pull(x, z);
             return res;
         }
-
+        
+        template<typename T>
         void modify(int x, int l, int r, int ll, int rr, const T &v) {
             if (ll <= l && r <= rr) {
                 tree[x].apply(l, r, v);
@@ -96,7 +95,9 @@ class segtree {
         }
 
         int find_first_knowingly(int x, int l, int r, const function<bool(const node&)> &f) {
-            if (l == r) return l;
+            if (l == r) {
+                return l;
+            }
             push(x, l, r);
             int y = (l + r) >> 1;
             int z = x + ((y - l + 1) << 1);
@@ -123,7 +124,9 @@ class segtree {
         }
 
         int find_last_knowingly(int x, int l, int r, const function<bool(const node&)> &f) {
-            if (l == r) return l;
+            if (l == r) {
+                return l;
+            }
             push(x, l, r);
             int y = (l + r) >> 1;
             int z = x + ((y - l + 1) << 1);
@@ -149,13 +152,13 @@ class segtree {
             return res;
         }
     
-    public:
         segtree(int _n) : n(_n) {
             assert(n > 0);
             tree.resize(2 * n - 1);
             build(0, 0, n - 1);
         }
 
+        template<typename T>
         segtree(const vector<T> &v) {
             n = v.size();
             assert(n > 0);
@@ -163,21 +166,23 @@ class segtree {
             build(0, 0, n - 1, v);
         }
 
-        T get(int ll, int rr) {
+        node get(int ll, int rr) {
             assert(0 <= ll && ll <= rr && rr <= n - 1);
-            return get(0, 0, n - 1, ll, rr).val;
+            return get(0, 0, n - 1, ll, rr);
         }
 
-        T get(int p) {
+        node get(int p) {
             assert(0 <= p && p <= n - 1);
-            return get(0, 0, n - 1, p, p).val;
+            return get(0, 0, n - 1, p, p);
         }
 
+        template<typename T>
         void modify(int ll, int rr, const T &v) {
             assert(0 <= ll && ll <= rr && rr <= n - 1);
             modify(0, 0, n - 1, ll, rr, v);
         }
-
+        
+        template<typename T>
         void modify(int p, const T &v) {
             assert(0 <= p && p <= n - 1);
             modify(0, 0, n - 1, p, p, v);
@@ -201,14 +206,14 @@ int main() {
     cin >> n >> m;
     vector<int> a(n);
     for (int i = 0; i < n; ++i) cin >> a[i];
-    segtree<int> st(a);
+    segtree st(a);
     while (m--) {
         string op;
         cin >> op;
         if (op[0] == 'Q') {
             int l, r;
             cin >> l >> r;
-            cout << st.get(l, r) << endl;
+            cout << st.get(l, r).val << endl;
         } else if (op[0] == 'U') {
             int p, v;
             cin >> p >> v;
@@ -216,10 +221,9 @@ int main() {
         } else {
             int x;
             cin >> x;
-            function<bool(const node&)> f = [&](const node &u) {
-                return u.val <= x;
-            };
-            int p = st.find_first(0, n - 1, f);
+            int p = st.find_first(0, n - 1, [&](const segtree::node &nd) {
+                return nd.val <= x;
+            });
             cout << p << endl;
         }
     }
