@@ -5,18 +5,18 @@ using namespace std;
 class segtree {
     public:
         struct node {
-            int val = -1;
+            int val = 0;
             int lazy = 0;
 
             void apply(int l, int r, int v) {
-                val = v;
+                val = (r - l + 1) * v;
                 lazy = v;
             }
         };
 
         node unite(const node &a, const node &b) {
             node res;
-            res.val = max(a.val, b.val);
+            res.val = a.val + b.val;
             return res;
         }
 
@@ -202,30 +202,23 @@ class segtree {
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
-    int n, m;
-    cin >> n >> m;
-    vector<int> a(n);
-    for (int i = 0; i < n; ++i) cin >> a[i];
-    segtree st(a);
-    while (m--) {
-        string op;
-        cin >> op;
-        if (op[0] == 'Q') {
-            int l, r;
-            cin >> l >> r;
-            cout << st.get(l, r).val << endl;
-        } else if (op[0] == 'U') {
-            int p, v;
-            cin >> p >> v;
-            st.modify(p, v);
-        } else {
-            int x;
-            cin >> x;
-            int p = st.find_first(0, n - 1, [&](const segtree::node &nd) {
-                return nd.val <= x;
-            });
-            cout << p << endl;
+    int T;
+    cin >> T;
+    for (int Case = 1; Case <= T; ++Case) {
+        cout << "Case " << Case << ": The total value of the hook is ";
+        int n;
+        cin >> n;
+        segtree st(n);
+        st.modify(0, n - 1, 1);
+        int q;
+        cin >> q;
+        while (q--) {
+            int l, r, v;
+            cin >> l >> r >> v;
+            --l, --r;
+            st.modify(l, r, v);
         }
+        cout << st.get(0, n - 1).val << "." << endl;
     }
     return 0;
 }

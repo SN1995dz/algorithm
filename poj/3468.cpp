@@ -1,22 +1,26 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
+#include <cassert>
 
 using namespace std;
 
 class segtree {
     public:
         struct node {
-            int val = -1;
-            int lazy = 0;
+            long long val;
+            int lazy;
+
+            node() : val(0), lazy(0) {}
 
             void apply(int l, int r, int v) {
-                val = v;
-                lazy = v;
+                val += (long long)(r - l + 1) * v;
+                lazy += v;
             }
         };
 
         node unite(const node &a, const node &b) {
             node res;
-            res.val = max(a.val, b.val);
+            res.val = a.val + b.val;
             return res;
         }
 
@@ -94,63 +98,63 @@ class segtree {
             pull(x, z);
         }
 
-        int find_first_knowingly(int x, int l, int r, const function<bool(const node&)> &f) {
-            if (l == r) {
-                return l;
-            }
-            push(x, l, r);
-            int y = (l + r) >> 1;
-            int z = x + ((y - l + 1) << 1);
-            int res;
-            if (f(tree[x + 1])) res = find_first_knowingly(x + 1, l, y, f);
-            else res = find_first_knowingly(z, y + 1, r, f);
-            pull(x, z);
-            return res;
-        }
+        //int find_first_knowingly(int x, int l, int r, const function<bool(const node&)> &f) {
+        //    if (l == r) {
+        //        return l;
+        //    }
+        //    push(x, l, r);
+        //    int y = (l + r) >> 1;
+        //    int z = x + ((y - l + 1) << 1);
+        //    int res;
+        //    if (f(tree[x + 1])) res = find_first_knowingly(x + 1, l, y, f);
+        //    else res = find_first_knowingly(z, y + 1, r, f);
+        //    pull(x, z);
+        //    return res;
+        //}
 
-        int find_first(int x, int l, int r, int ll, int rr, const function<bool(const node&)> &f) {
-            if (ll <= l && r <= rr) {
-                if (!f(tree[x])) return -1;
-                return find_first_knowingly(x, l, r, f);
-            }
-            push(x, l, r);
-            int y = (l + r) >> 1;
-            int z = x + ((y - l + 1) << 1);
-            int res = -1;
-            if (ll <= y) res = find_first(x + 1, l, y, ll, rr, f);
-            if (rr > y && res == -1) res = find_first(z, y + 1, r, ll, rr, f);
-            pull(x, z);
-            return res;
-        }
+        //int find_first(int x, int l, int r, int ll, int rr, const function<bool(const node&)> &f) {
+        //    if (ll <= l && r <= rr) {
+        //        if (!f(tree[x])) return -1;
+        //        return find_first_knowingly(x, l, r, f);
+        //    }
+        //    push(x, l, r);
+        //    int y = (l + r) >> 1;
+        //    int z = x + ((y - l + 1) << 1);
+        //    int res = -1;
+        //    if (ll <= y) res = find_first(x + 1, l, y, ll, rr, f);
+        //    if (rr > y && res == -1) res = find_first(z, y + 1, r, ll, rr, f);
+        //    pull(x, z);
+        //    return res;
+        //}
 
-        int find_last_knowingly(int x, int l, int r, const function<bool(const node&)> &f) {
-            if (l == r) {
-                return l;
-            }
-            push(x, l, r);
-            int y = (l + r) >> 1;
-            int z = x + ((y - l + 1) << 1);
-            int res;
-            if (f(tree[z])) res = find_last_knowingly(z, y + 1, r, f);
-            else res = find_last_knowingly(x + 1, l, y, f);
-            pull(x, z);
-            return res;
-        }
+        //int find_last_knowingly(int x, int l, int r, const function<bool(const node&)> &f) {
+        //    if (l == r) {
+        //        return l;
+        //    }
+        //    push(x, l, r);
+        //    int y = (l + r) >> 1;
+        //    int z = x + ((y - l + 1) << 1);
+        //    int res;
+        //    if (f(tree[z])) res = find_last_knowingly(z, y + 1, r, f);
+        //    else res = find_last_knowingly(x + 1, l, y, f);
+        //    pull(x, z);
+        //    return res;
+        //}
 
-        int find_last(int x, int l, int r, int ll, int rr, const function<bool(const node&)> &f) {
-            if (ll <= l && r <= rr) {
-                if (!f(tree[x])) return -1;
-                return find_last_knowingly(x, l, r, f);
-            }
-            push(x, l, r);
-            int y = (l + r) >> 1;
-            int z = x + ((y - l + 1) << 1);
-            int res = -1;
-            if (rr > y) res = find_last(z, y + 1, r, ll, rr, f);
-            if (ll <= y && res == -1) res = find_last(x + 1, l, y, ll, rr, f);
-            pull(x, z);
-            return res;
-        }
+        //int find_last(int x, int l, int r, int ll, int rr, const function<bool(const node&)> &f) {
+        //    if (ll <= l && r <= rr) {
+        //        if (!f(tree[x])) return -1;
+        //        return find_last_knowingly(x, l, r, f);
+        //    }
+        //    push(x, l, r);
+        //    int y = (l + r) >> 1;
+        //    int z = x + ((y - l + 1) << 1);
+        //    int res = -1;
+        //    if (rr > y) res = find_last(z, y + 1, r, ll, rr, f);
+        //    if (ll <= y && res == -1) res = find_last(x + 1, l, y, ll, rr, f);
+        //    pull(x, z);
+        //    return res;
+        //}
     
         segtree(int _n) : n(_n) {
             assert(n > 0);
@@ -188,43 +192,36 @@ class segtree {
             modify(0, 0, n - 1, p, p, v);
         }
 
-        int find_first(int ll, int rr, const function<bool(const node&)> &f) {
-            assert(0 <= ll && ll <= rr && rr <= n - 1);
-            return find_first(0, 0, n - 1, ll, rr, f);
-        }
+        //int find_first(int ll, int rr, const function<bool(const node&)> &f) {
+        //    assert(0 <= ll && ll <= rr && rr <= n - 1);
+        //    return find_first(0, 0, n - 1, ll, rr, f);
+        //}
 
-        int find_last(int ll, int rr, const function<bool(const node&)> &f) {
-            assert(0 <= ll && ll <= rr && rr <= n - 1);
-            return find_last(0, 0, n - 1, ll, rr, f);
-        }
+        //int find_last(int ll, int rr, const function<bool(const node&)> &f) {
+        //    assert(0 <= ll && ll <= rr && rr <= n - 1);
+        //    return find_last(0, 0, n - 1, ll, rr, f);
+        //}
 };
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
-    int n, m;
-    cin >> n >> m;
+    int n, q;
+    cin >> n >> q;
     vector<int> a(n);
     for (int i = 0; i < n; ++i) cin >> a[i];
     segtree st(a);
-    while (m--) {
+    while (q--) {
         string op;
-        cin >> op;
-        if (op[0] == 'Q') {
-            int l, r;
-            cin >> l >> r;
-            cout << st.get(l, r).val << endl;
-        } else if (op[0] == 'U') {
-            int p, v;
-            cin >> p >> v;
-            st.modify(p, v);
+        int l, r;
+        cin >> op >> l >> r;
+        --l, --r;
+        if (op[0] == 'C') {
+            int v;
+            cin >> v;
+            st.modify(l, r, v);
         } else {
-            int x;
-            cin >> x;
-            int p = st.find_first(0, n - 1, [&](const segtree::node &nd) {
-                return nd.val <= x;
-            });
-            cout << p << endl;
+            cout << st.get(l, r).val << endl;
         }
     }
     return 0;
