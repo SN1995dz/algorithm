@@ -40,7 +40,7 @@ class segtree {
         }
 
         int n;
-        node tree[60000];
+        node tree[80000];
         //vector<node> tree;
 
         void build(int x, int l, int r) {
@@ -206,14 +206,14 @@ class segtree {
 };
 
 pair<int, int> a[10000];
-int h[30000];
+int h[40000];
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     int T;
     cin >> T;
-    segtree st(30000);
+    segtree st(40000);
     while (T--) {
         int n;
         cin >> n;
