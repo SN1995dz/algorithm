@@ -11,7 +11,7 @@ class segtree {
             int val;
             int lazy;
 
-            node() : val(0), lazy(0) {}
+            node() : val(0), lazy(-1) {}
 
             void apply(int l, int r, int v) {
                 val = v;
@@ -28,10 +28,10 @@ class segtree {
         inline void push(int x, int l, int r) {
             int y = (l + r) >> 1;
             int z = x + ((y - l + 1) << 1);
-            if (tree[x].lazy) {
+            if (tree[x].lazy != -1) {
                 tree[x + 1].apply(l, y, tree[x].lazy);
                 tree[z].apply(y + 1, r, tree[x].lazy);
-                tree[x].lazy = 0;
+                tree[x].lazy = -1;
             }
         }
 
@@ -217,27 +217,28 @@ int main() {
     while (T--) {
         int n;
         cin >> n;
-        h.clear();
+        int m = 0;
         for (int i = 0; i < n; ++i) {
             cin >> a[i].first >> a[i].second;
-            h.push_back(a[i].first);
-            h.push_back(a[i].second);
+            h[m++] = a[i].first;
+            h[m++] = a[i].second;
         }
-        sort(h.begin(), h.end());
-        for (int i = 1; i < (int)h.size(); ++i) {
+        sort(h, h + m);
+        for (int i = m - 1; i >= 1; --i) {
             if (h[i] > h[i - 1] + 1) {
-                h.push_back(h[i] - 1);
+                h[m++] = h[i] - 1;
             }
         }
-        sort(h.begin(), h.end());
-        h.erase(unique(h.begin(), h.end()), h.end());
-        int m = h.size();
+        sort(h, h + m);
+        m = unique(h, h + m) - h;
         st.modify(0, m - 1, 1);
         int ans = 0;
         for (int i = n - 1; i >= 0; --i) {
-            int l = lower_bound(h.begin(), h.end(), a[i].first) - h.begin();
-            int r = lower_bound(h.begin(), h.end(), a[i].second) - h.begin();
-            if (st.get(l, r).val == 1) ++ans;
+            int l = lower_bound(h, h + m, a[i].first) - h;
+            int r = lower_bound(h, h + m, a[i].second) - h;
+            if (st.get(l, r).val == 1) {
+                ++ans;
+            }
             st.modify(l, r, 0);
         }
         cout << ans << endl;
