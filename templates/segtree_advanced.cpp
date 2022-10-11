@@ -41,7 +41,6 @@ int main() {
     cin.tie(0);
     int n, m;
     cin >> n >> m;
-
     return 0;
 }
 
