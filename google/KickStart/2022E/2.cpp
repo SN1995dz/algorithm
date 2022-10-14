@@ -28,7 +28,6 @@ vector<int> manacher(string s) {
     return max_extend;
 }
 
-// [l,r] is/isn't palindrome
 bool check(int l, int r, vector<int>& m_e) {
     int ll = (l + 1) * 2, rr = (r + 1) * 2;
     int mid = (ll + rr) / 2;
@@ -39,16 +38,25 @@ bool check(int l, int r, vector<int>& m_e) {
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
-    string s;
-    cin >> s;
-    vector<int> m_e = manacher(s);
-    int n = s.length();
-    int ans = 0;
-    for (int i = 2; i <= 2 * n; ++i) {
-        ans = max(ans, m_e[i] - 1);
+    int T;
+    cin >> T;
+    for (int Case = 1; Case <= T; ++Case) {
+        cout << "Case #" << Case << ": ";
+        int n;
+        cin >> n;
+        string s;
+        cin >> s;
+        vector<int> m_e = manacher(s);
+        int res = n;
+        for (int i = 1; i < n; ++i) {
+            if (check(0, i - 1, m_e) && check(i, n - 1, m_e)) {
+                res = i;
+                break;
+            }
+        }
+        string ans = s.substr(0, res);
+        cout << ans << endl;
     }
-    cout << check(0, n - 1) << endl;
-    cout << ans << endl;
     return 0;
 }
 
