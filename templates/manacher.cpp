@@ -39,6 +39,7 @@ bool check(int l, int r, vector<int>& m_e) {
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
+    cout.tie(0);
     string s;
     cin >> s;
     vector<int> m_e = manacher(s);

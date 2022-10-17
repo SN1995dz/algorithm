@@ -34,6 +34,7 @@ vector<int> kmp(const T& s, const T& p) {
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
+    cout.tie(0);
     string s, p;
     cin >> s >> p;
     vector<int> ans = kmp(s, p);

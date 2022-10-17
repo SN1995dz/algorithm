@@ -42,6 +42,7 @@ struct Trie {
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
+    cout.tie(0);
     Trie T;
     T.insert("abc");
     cout << T.find("abc") << endl;

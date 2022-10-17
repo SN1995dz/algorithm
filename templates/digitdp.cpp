@@ -5,6 +5,7 @@ using namespace std;
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
+    cout.tie(0);
     vector<int> a;
     function<int(int, ..., bool, bool)> dfs = [&](int pos, ..., bool smaller, bool positive) {
         if (pos < 0) return ...; //1 or smaller && positive
