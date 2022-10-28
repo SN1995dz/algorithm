@@ -2,8 +2,8 @@
 #include <ext/pb_ds/assoc_container.hpp>
  
 using namespace std;
-using namespace __gnu_pbds;
 
+using namespace __gnu_pbds;
 template<class key, class cmp = less<key>>
 using ordered_set = tree<key, null_type, cmp, rb_tree_tag, tree_order_statistics_node_update>;
 template<class key, class value, class cmp = less<key>>
