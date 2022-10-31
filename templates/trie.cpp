@@ -48,4 +48,3 @@ int main() {
     cout << T.find("abc") << endl;
     return 0;
 }
-
