@@ -7,6 +7,7 @@ int main() {
     cin.tie(0);
     cout.tie(0);
     vector<int> a;
+    vector f(...);
     function<int(int, ..., bool, bool)> dfs = [&](int pos, ..., bool smaller, bool positive) {
         if (pos < 0) return ...; //1 or smaller && positive
         if (smaller && positive && f[pos][...] != -1) return f[pos][...];
