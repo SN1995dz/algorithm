@@ -31,3 +31,4 @@ int main() {
     cout << solve(r) - solve(l - 1) << endl;
     return 0;
 }
+
