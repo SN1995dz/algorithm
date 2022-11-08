@@ -42,3 +42,4 @@ int main() {
     vector<int> d = dijkstra(G, S);
     return 0;
 }
+
