@@ -29,6 +29,15 @@ long long floor_div(long long a, long long b) {
     return a / b - ((a ^ b) < 0 && a % b != 0);
 }
 
+vector<int> calc(int n, int MOD) {
+    vector<int> inv(n + 1, 0);
+    inv[1] = 1;
+    for (int i = 2; i <= n; ++i) {
+        inv[i] = (long long)(MOD - MOD / i) * inv[MOD % i] % MOD;
+    }
+    return inv;
+}
+
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
