@@ -2,6 +2,8 @@
 
 using namespace std;
 
+const double PI = acos(-1.0);
+
 // @param m '1 <= m'
 // @return x mod m
 long long safe_mod(long long x, long long m) {
