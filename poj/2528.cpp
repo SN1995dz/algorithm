@@ -11,11 +11,11 @@ class segtree {
             int val;
             int lazy;
 
-            node() : val(0), lazy(-1) {}
+            node() : val(0), lazy(0) {}
 
             void apply(int l, int r, int v) {
-                val = v;
-                lazy = v;
+                val += v;
+                lazy += v;
             }
         };
 
@@ -28,10 +28,10 @@ class segtree {
         inline void push(int x, int l, int r) {
             int y = (l + r) >> 1;
             int z = x + ((y - l + 1) << 1);
-            if (tree[x].lazy != -1) {
+            if (tree[x].lazy) {
                 tree[x + 1].apply(l, y, tree[x].lazy);
                 tree[z].apply(y + 1, r, tree[x].lazy);
-                tree[x].lazy = -1;
+                tree[x].lazy = 0;
             }
         }
 
@@ -213,7 +213,6 @@ int main() {
     cin.tie(0);
     int T;
     cin >> T;
-    segtree st(40000);
     while (T--) {
         int n;
         cin >> n;
@@ -231,6 +230,8 @@ int main() {
         }
         sort(h, h + m);
         m = unique(h, h + m) - h;
+        vector<int> tmp(m, 0);
+        segtree st(tmp);
         st.modify(0, m - 1, 1);
         int ans = 0;
         for (int i = n - 1; i >= 0; --i) {
@@ -239,7 +240,7 @@ int main() {
             if (st.get(l, r).val == 1) {
                 ++ans;
             }
-            st.modify(l, r, 0);
+            st.modify(l, r, -1);
         }
         cout << ans << endl;
     }
