@@ -40,6 +40,28 @@ vector<int> calc(int n, int MOD) {
     return inv;
 }
 
+vector<int> spf; // spf[x] i s the smallest prime factor of number x, where x >= 2
+
+void sieve(int n) { // O(Nlog(logN)) ~ O(N)
+    spf.resize(n + 1);
+    for (int i = 2; i <= n; ++i) spf[i] = i;
+    for (int i = 2; i * i <= n; ++i) {
+        if (spf[i] != i) continue; // skip if 'i' is not a prime number
+        for (int j = i * i; j <= n; j += i) {
+            if (spf[j] > i) spf[j] = i; // update to the smallest prime factor of j
+        }
+    }
+}
+
+vector<int> getPrimeFactors(int n) { // O(logN)
+    vector<int> factors;
+    while (n > 1) {
+        factors.push_back(spf[n]);
+        n /= spf[n];
+    }
+    return factors;
+}
+
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
