@@ -4,7 +4,7 @@ using namespace std;
 
 struct edge {
     int to, cost;
-    edge(int to, int cost) : to(to), cost(cost) {}
+    edge(int _to, int _cost) : to(_to), cost(_cost) {}
 };
 
 const int INF = 1e9;
