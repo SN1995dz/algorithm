@@ -20,23 +20,26 @@ int main() {
             G[n].push_back(i);
         }
     }
-    vector<vector<int>> f(n + 1, vector<int>(m + 2, -1));
-    function<int(int, int)> dp = [&](int u, int w) {
-        if (w == 0) return 0;
-        if (w == 1) return s[u];
-        if (f[u][w] != -1) return f[u][w];
-        vector<int> g(w, 0);
+    vector<int> sz(n + 1);
+    vector<int> S;
+    function<void(int)> dfs = [&](int u) {
+        sz[u] = 1;
         for (int i = 0; i < (int)G[u].size(); ++i) {
             int v = G[u][i];
-            for (int j = w - 1; j >= 0; --j) {
-                for (int k = j; k >= 0; --k) {
-                    g[j] = max(g[j], g[j - k] + dp(v, k));
-                }
-            }
+            dfs(v);
+            sz[u] += sz[v];
         }
-        return f[u][w] = g[w - 1] + s[u];
+        S.push_back(u);
     };
-    cout << dp(n, m + 1) << endl;
+    dfs(n);
+    vector<vector<int>> f(n + 2, vector<int>(m + 2, 0));
+    for (int i = 1; i <= n + 1; ++i) {
+        int idx = S[i - 1];
+        for (int j = 1; j <= m + 1; ++j) {
+            f[i][j] = max(f[i - sz[idx]][j], f[i - 1][j - 1] + s[idx]);
+        }
+    }
+    cout << f[n + 1][m + 1] << endl;
     return 0;
 }
 
