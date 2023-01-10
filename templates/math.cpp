@@ -2,6 +2,10 @@
 
 using namespace std;
 
+/* knowledges
+1) a * b > c --> a > c / b
+*/
+
 const double PI = acos(-1.0);
 
 // @param m '1 <= m'
@@ -27,6 +31,33 @@ long long pow_mod(long long x, long long n, int m) {
     return r;
 }
 
+// @param b '1 <= b'
+// @return pair(g, x) s.t. g = gcd(a, b), xa = g(mod b), 0 <= x < b/g
+pair<long long, long long> inv_gcd(long long a, long long b) {
+    a = safe_mod(a, b);
+    if (a == 0) return {b, 0};
+    long long s = b, t = a;
+    long long m0 = 0, m1 = 1;
+    while (t) {
+        long long u = s / t;
+        s -= t * u;
+        m0 -= m1 * u;
+        swap(s, t);
+        swap(m0, m1);
+    }
+    if (m0 < 0) m0 += b / s;
+    return {s, m0};
+}
+
+// @Constraints 'gcd(x, m) = 1' '1 <= m'
+// @return y s.t. '0 <= y < m && xy = 1(mod m)'
+long long inv_mod(long long x, long long m) {
+    assert(1 <= m);
+    auto z = inv_gcd(x, m);
+    assert(z.first == 1);
+    return z.second;
+}
+
 long long floor_div(long long a, long long b) {
     return a / b - ((a ^ b) < 0 && a % b != 0);
 }
@@ -40,7 +71,7 @@ vector<int> calc(int n, int MOD) {
     return inv;
 }
 
-vector<int> spf; // spf[x] i s the smallest prime factor of number x, where x >= 2
+vector<int> spf; // spf[x] is the smallest prime factor of number x, where x >= 2
 
 void sieve(int n) { // O(Nlog(logN)) ~ O(N)
     spf.resize(n + 1);
