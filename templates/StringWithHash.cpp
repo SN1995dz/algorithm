@@ -2,10 +2,6 @@
 
 using namespace std;
 
-const int HASH_CNT = 2;
-vector<int> hashBase = {269, 271};
-vector<int> hashMod = {int(1e9 + 9), 998244353};
-
 struct StringWithHash {
     public:
         string s;
@@ -33,6 +29,9 @@ struct StringWithHash {
         }
 
     private:
+        const int HASH_CNT = 2;
+        vector<int> hashBase = {269, 271};
+        vector<int> hashMod = {int(1e9 + 9), 998244353};
         vector<vector<int>> powMod;
         vector<vector<int>> hash;
 };
