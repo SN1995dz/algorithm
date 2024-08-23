@@ -2,7 +2,7 @@
 
 using namespace std;
 
-// p[i] = max{x}->a[0..x-1]=a[i-x+1..i]; len=p[i]+1
+// p[i] = max{x}->a[0..x]=a[i-x..i]; len=p[i]+1
 template<typename T>
 vector<int> getP(const T& a) {
     int n = a.size();
@@ -34,11 +34,16 @@ vector<int> kmp(const T& s, const T& p) {
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-    string s, p;
-    cin >> s >> p;
-    vector<int> ans = kmp(s, p);
-    for (int i = 0; i < (int)ans.size(); ++i) {
-        cout << ans[i] << endl;
+    int T;
+    cin >> T;
+    while (T--) {
+        string s;
+        cin >> s;
+        vector<int> p = getP(s);
+        int n = s.length();
+        if (n % (n - (p[n - 1] + 1)) == 0) cout << n - (p[n - 1] + 1) << endl;
+        else cout << n << endl;
+        if (T) cout << endl;
     }
     return 0;
 }
