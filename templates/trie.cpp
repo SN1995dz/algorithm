@@ -32,9 +32,11 @@ struct Trie {
     private:
         static constexpr int CHARSET = 26;
         struct node {
-            node() : cnt(0), next(CHARSET, 0) {}
+            node() : cnt(0) {
+                memset(next, 0, sizeof(next));
+            }
             int cnt;
-            vector<int> next;
+            int next[CHARSET];
         };
         vector<node> pool;
 };
