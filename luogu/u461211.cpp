@@ -48,11 +48,22 @@ bool equal(const vector<int> &a, const vector<int> &b) {
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-    StringWithHash a("template");
-    StringWithHash b;
-    string s = "template";
-    for (auto c : s) b.extend(c);
-    cout << equal(a.getHash(0, 7), b.getHash(0, 7)) << endl;
+    int n;
+    cin >> n;
+    vector<pair<int, int>> S;
+    for (int i = 0; i < n; ++i) {
+        string s;
+        cin >> s;
+        StringWithHash a(s);
+        auto tmp = a.getHash(0, s.length() - 1);
+        S.push_back(make_pair(tmp[0], tmp[1]));
+    }
+    sort(S.begin(), S.end());
+    int ans = 1;
+    for (int i = 1; i < n; ++i) {
+        if (S[i - 1] != S[i]) ++ans;
+    }
+    cout << ans << endl;
     return 0;
 }
 
