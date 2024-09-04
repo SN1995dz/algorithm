@@ -49,14 +49,27 @@ int main() {
     cin.tie(nullptr);
     string s, p;
     cin >> s >> p;
-    vector<int> ans = kmp(s, p);
-    for (auto pos : ans) cout << pos << endl;
-    vector<vector<int>> aut = computeAutomation(p);
-    for (int i = 0; i <= (int)p.length(); ++i) {
-        for (int c = 0; c < 26; ++c) {
-            if (aut[i][c] != 0) cout << i << " " << c << " " << aut[i][c] << endl;
+    int n = s.length(), m = p.length();
+    vector<vector<int>> nxt = computeAutomation(p);
+    vector<vector<int>> f(n + 1, vector<int>(m + 1, -1));
+    f[0][0] = 0;
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j <= m; ++j) {
+            if (f[i][j] == -1) continue;
+            if (s[i] == '?') {
+                for (int c = 0; c < 26; ++c) {
+                    int t = nxt[j][c];
+                    f[i + 1][t] = max(f[i + 1][t], f[i][j] + (t == m));
+                }
+            } else {
+                int t = nxt[j][s[i] - 'a'];
+                f[i + 1][t] = max(f[i + 1][t], f[i][j] + (t == m));
+            }
         }
     }
+    int ans = 0;
+    for (int j = 0; j <= m; ++j) ans = max(ans, f[n][j]);
+    cout << ans << endl;
     return 0;
 }
 

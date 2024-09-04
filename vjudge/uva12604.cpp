@@ -31,30 +31,43 @@ vector<int> kmp(const T& s, const T& p) {
     return res;
 }
 
-vector<vector<int>> computeAutomation(string s) {
-    int n = s.length();
-    vector<int> P = getP(s);
-    vector<vector<int>> aut(n + 1, vector<int>(26));
-    for (int i = 0; i <= n; ++i) {
-        for (int c = 0; c < 26; ++c) {
-            if (i == n || (i > 0 && 'a' + c != s[i])) aut[i][c] = aut[P[i - 1] + 1][c];
-            else aut[i][c] = i + ('a' + c == s[i]);
-        }
-    }
-    return aut;
-}
-
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-    string s, p;
-    cin >> s >> p;
-    vector<int> ans = kmp(s, p);
-    for (auto pos : ans) cout << pos << endl;
-    vector<vector<int>> aut = computeAutomation(p);
-    for (int i = 0; i <= (int)p.length(); ++i) {
-        for (int c = 0; c < 26; ++c) {
-            if (aut[i][c] != 0) cout << i << " " << c << " " << aut[i][c] << endl;
+    int T;
+    cin >> T;
+    while (T--) {
+        string a;
+        cin >> a;
+        int n = a.length();
+        map<char, int> M;
+        for (int i = 0; i < n; ++i) {
+            M[a[i]] = i;
+        }
+        string p, s;
+        cin >> p;
+        cin >> s;
+        vector<int> ans;
+        for (int i = 0; i < n; ++i) {
+            string tp;
+            for (int j = 0; j < (int)p.length(); ++j) {
+                tp.push_back(a[(M[p[j]] + i) % n]);
+            }
+            vector<int> res = kmp(s, tp);
+            if (res.size() == 1) {
+                ans.push_back(i);
+            }
+        }
+        if (ans.size() == 0) cout << "no solution" << endl;
+        else if (ans.size() == 1) {
+            cout << "unique: ";
+            cout << ans[0] << endl;
+        } else {
+            cout << "ambiguous:";
+            for (auto x : ans) {
+                cout << " " << x;
+            }
+            cout << endl;
         }
     }
     return 0;

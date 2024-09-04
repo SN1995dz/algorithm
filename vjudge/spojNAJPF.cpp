@@ -31,31 +31,22 @@ vector<int> kmp(const T& s, const T& p) {
     return res;
 }
 
-vector<vector<int>> computeAutomation(string s) {
-    int n = s.length();
-    vector<int> P = getP(s);
-    vector<vector<int>> aut(n + 1, vector<int>(26));
-    for (int i = 0; i <= n; ++i) {
-        for (int c = 0; c < 26; ++c) {
-            if (i == n || (i > 0 && 'a' + c != s[i])) aut[i][c] = aut[P[i - 1] + 1][c];
-            else aut[i][c] = i + ('a' + c == s[i]);
-        }
-    }
-    return aut;
-}
-
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-    string s, p;
-    cin >> s >> p;
-    vector<int> ans = kmp(s, p);
-    for (auto pos : ans) cout << pos << endl;
-    vector<vector<int>> aut = computeAutomation(p);
-    for (int i = 0; i <= (int)p.length(); ++i) {
-        for (int c = 0; c < 26; ++c) {
-            if (aut[i][c] != 0) cout << i << " " << c << " " << aut[i][c] << endl;
+    int T;
+    cin >> T;
+    while (T--) {
+        string s, p;
+        cin >> s >> p;
+        vector<int> ans = kmp(s, p);
+        if (ans.empty()) cout << "Not Found" << endl;
+        else {
+            cout << ans.size() << endl;
+            for (int i = 0; i < (int)ans.size(); ++i) cout << ans[i] + 1 << " ";
+            cout << endl;
         }
+        cout << endl;
     }
     return 0;
 }

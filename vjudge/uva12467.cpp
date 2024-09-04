@@ -31,31 +31,26 @@ vector<int> kmp(const T& s, const T& p) {
     return res;
 }
 
-vector<vector<int>> computeAutomation(string s) {
-    int n = s.length();
-    vector<int> P = getP(s);
-    vector<vector<int>> aut(n + 1, vector<int>(26));
-    for (int i = 0; i <= n; ++i) {
-        for (int c = 0; c < 26; ++c) {
-            if (i == n || (i > 0 && 'a' + c != s[i])) aut[i][c] = aut[P[i - 1] + 1][c];
-            else aut[i][c] = i + ('a' + c == s[i]);
-        }
-    }
-    return aut;
-}
-
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-    string s, p;
-    cin >> s >> p;
-    vector<int> ans = kmp(s, p);
-    for (auto pos : ans) cout << pos << endl;
-    vector<vector<int>> aut = computeAutomation(p);
-    for (int i = 0; i <= (int)p.length(); ++i) {
-        for (int c = 0; c < 26; ++c) {
-            if (aut[i][c] != 0) cout << i << " " << c << " " << aut[i][c] << endl;
+    int T;
+    cin >> T;
+    while (T--) {
+        string s;
+        cin >> s;
+        int n = s.length();
+        string t = s;
+        reverse(s.begin(), s.end());
+        t += "#" + s;
+        vector<int> P = getP(t);
+        int maxLen = 0;
+        for (int i = n + 1; i < n + n + 1; ++i) {
+            maxLen = max(maxLen, P[i] + 1);
         }
+        string ans = t.substr(0, maxLen);
+        reverse(ans.begin(), ans.end());
+        cout << ans << endl;
     }
     return 0;
 }
