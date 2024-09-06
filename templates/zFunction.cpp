@@ -4,7 +4,7 @@ using namespace std;
 
 // z[i] = max{x}->a[0..x-1]=a[i..i+x-1]
 template<typename T>
-vector<int> z_algorithm(const T& a) {
+vector<int> zFunction(const T& a) {
     int n = a.size();
     vector<int> z(n);
     z[0] = n;
@@ -22,9 +22,12 @@ vector<int> z_algorithm(const T& a) {
 
 int main() {
     ios::sync_with_stdio(false);
-    cin.tie(0);
-    cout.tie(0);
-
+    cin.tie(nullptr);
+    string s;
+    cin >> s;
+    int n = s.length();
+    vector<int> z = zFunction(s);
+    for (int i = 0; i < n; ++i) cout << i << " " << z[i] << endl;
     return 0;
 }
 
