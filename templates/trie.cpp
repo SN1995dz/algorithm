@@ -2,7 +2,7 @@
 
 using namespace std;
 
-struct Trie {
+class Trie {
     public:
         Trie() : pool(1) {}
 
