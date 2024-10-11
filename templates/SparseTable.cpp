@@ -2,24 +2,17 @@
 
 using namespace std;
 
-template<typename T> class sparse_table {
+template<typename T> class SparseTable {
     public:
-        int n;
-        vector<vector<T>> f;
-
-        inline int LOG2(unsigned int x) {
-            return 31 - __builtin_clz(x);
-        }
-
-        sparse_table(const vector<T> &v) {
+        SparseTable(const vector<T> &v, function<T(const T &, const T &)> _op=defaultFunc) {
+            op = _op;
             n = v.size();
             assert(n > 0);
             f.resize(n, vector<T>(LOG2(n) + 1));
             for (int i = 0; i < n; ++i) f[i][0] = v[i];
             for (int j = 1; (1 << j) <= n; ++j) {
                 for (int i = 0; i + (1 << j) - 1 < n; ++i) {
-                    //min or max
-                    f[i][j] = min(f[i][j - 1], f[i + (1 << (j - 1))][j - 1]);
+                    f[i][j] = op(f[i][j - 1], f[i + (1 << (j - 1))][j - 1]);
                 }
             }
         }
@@ -27,24 +20,36 @@ template<typename T> class sparse_table {
         T get(int l, int r) {
             assert(0 <= l && l <= r && r < n);
             int k = LOG2(r - l + 1);
-            //min or max
-            return min(f[l][k], f[r - (1 << k) + 1][k]);
+            return op(f[l][k], f[r - (1 << k) + 1][k]);
         }
+    private:
+        int n;
+        vector<vector<T>> f;
+
+        inline int LOG2(unsigned int x) {
+            return 31 - __builtin_clz(x);
+        }
+
+        // min;max;gcd;...
+        static T defaultFunc(const T &a, const T &b) {
+            return min(a, b);
+        }
+
+        function<T(const T &, const T &)> op;
 };
 
 int main() {
     ios::sync_with_stdio(false);
-    cin.tie(0);
-    cout.tie(0);
+    cin.tie(nullptr);
     int n, m;
     cin >> n >> m;
     vector<int> a(n);
     for (int i = 0; i < n; ++i) cin >> a[i];
-    sparse_table<int> st(a);
+    SparseTable<int> ST(a);
     while (m--) {
         int l, r;
         cin >> l >> r;
-        cout << st.get(l, r) << endl;
+        cout << ST.get(l, r) << endl;
     }
     return 0;
 }
