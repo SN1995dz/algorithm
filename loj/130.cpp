@@ -2,14 +2,24 @@
 
 using namespace std;
 
-template<typename T> class fenwick {
+template<typename T> class Fenwick {
     public:
         vector<T> fenw;
         int n;
 
-        fenwick(int _n) : n(_n) {
+        Fenwick(int _n) : n(_n) {
             assert(n > 0);
             fenw.resize(_n);
+        }
+
+        Fenwick(vector<T> &a) {
+            n = a.size();
+            fenw.resize(n);
+            for (int i = 0; i < n; ++i) {
+                fenw[i] += a[i];
+                int j = i | (i + 1);
+                if (j < n) fenw[j] += fenw[i];
+            }
         }
 
         void modify(int x, T v) {
@@ -36,7 +46,7 @@ template<typename T> class fenwick {
             return get(rr) - get(ll - 1);
         }
 
-        // "smallest = v" or "biggest < v"
+        // "smallest = v" or "biggest < v"; TO DO: optimize
         int binary_search(int ll, int rr, T v) {
             int l = ll, r = rr, res = -1;
             while (l <= r) {
@@ -54,19 +64,22 @@ template<typename T> class fenwick {
 
 int main() {
     ios::sync_with_stdio(false);
-    cin.tie(0);
-    cout.tie(0);
-    int n;
-    cin >> n;
-    fenwick<int> fenw(n);
-    for (int i = 0; i < n; ++i) fenw.modify(i, 1);
-    for (int i = 0; i < n; ++i) {
-        int p;
-        cin >> p;
-        int tmp = fenw.binary_search(0, n - 1, p);
-        assert(tmp != -1);
-        cout << tmp << endl;
-        fenw.modify(tmp, -1);
+    cin.tie(nullptr);
+    int n, q;
+    cin >> n >> q;
+    vector<long long> a(n);
+    for (int i = 0; i < n; ++i) cin >> a[i];
+    Fenwick<long long> f(a);
+    while (q--) {
+        int op, x, y;
+        cin >> op >> x >> y;
+        if (op == 1) {
+            --x;
+            f.modify(x, y);
+        } else {
+            --x, --y;
+            cout << f.get(x, y) << endl;
+        }
     }
     return 0;
 }
