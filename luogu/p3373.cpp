@@ -2,40 +2,79 @@
 
 using namespace std;
 
-class segtree {
-    public:
-        struct node {
-            int val = -1;
-            int lazy = 0;
+long long MOD;
 
-            void apply(int l, int r, int v) {
-                val = v;
-                lazy = v;
+template<typename T> class SegTree {
+    public:
+        SegTree(int _n) : n(_n) {
+            assert(n > 0);
+            tree.resize(2 * n - 1);
+            build(0, 0, n - 1);
+        }
+
+        SegTree(const vector<T> &v) {
+            n = v.size();
+            assert(n > 0);
+            tree.resize(2 * n - 1);
+            build(0, 0, n - 1, v);
+        }
+        
+        void modify(int ll, int rr, const T &v, int type) {
+            assert(0 <= ll && ll <= rr && rr <= n - 1);
+            modify(0, 0, n - 1, ll, rr, v, type);
+        }
+        
+        T get(int ll, int rr) {
+            assert(0 <= ll && ll <= rr && rr <= n - 1);
+            return get(0, 0, n - 1, ll, rr).val;
+        }
+
+    private:
+        struct node {
+            T val = T();
+            T lazy0 = 1;
+            T lazy1 = T();
+            bool ifLazy = false;
+
+            void apply(int l, int r, T v, int type) {
+                if (type == 0) {
+                    val = val * v % MOD;
+                    lazy0 = lazy0 * v % MOD;
+                    lazy1 = lazy1 * v % MOD;
+                } else {
+                    val = (val + v * (r - l + 1) % MOD) % MOD;
+                    lazy1 = (lazy1 + v) % MOD;
+                }
+                ifLazy = true;
             }
         };
+        
+        int n;
+        vector<node> tree;
 
         node unite(const node &a, const node &b) {
             node res;
-            res.val = max(a.val, b.val);
+            res.val = (a.val + b.val) % MOD;
             return res;
         }
 
         inline void push(int x, int l, int r) {
             int y = (l + r) >> 1;
             int z = x + ((y - l + 1) << 1);
-            if (tree[x].lazy) {
-                tree[x + 1].apply(l, y, tree[x].lazy);
-                tree[z].apply(y + 1, r, tree[x].lazy);
-                tree[x].lazy = 0;
+            if (tree[x].ifLazy) {
+                tree[x + 1].apply(l, y, tree[x].lazy0, 0);
+                tree[x + 1].apply(l, y, tree[x].lazy1, 1);
+                tree[z].apply(y + 1, r, tree[x].lazy0, 0);
+                tree[z].apply(y + 1, r, tree[x].lazy1, 1);
+                tree[x].lazy0 = 1;
+                tree[x].lazy1 = T();
+                tree[x].ifLazy = false;
             }
         }
 
         inline void pull(int x, int z) {
             tree[x] = unite(tree[x + 1], tree[z]);
         }
-
-        int n;
-        vector<node> tree;
 
         void build(int x, int l, int r) {
             if (l == r) return;
@@ -46,10 +85,9 @@ class segtree {
             pull(x, z);
         }
 
-        template<typename T>
         void build(int x, int l, int r, const vector<T> &v) {
             if (l == r) {
-                tree[x].apply(l, r, v[l]);
+                tree[x].apply(l, r, v[l], 1);
                 return;
             }
             int y = (l + r) >> 1;
@@ -58,11 +96,22 @@ class segtree {
             build(z, y + 1, r, v);
             pull(x, z);
         }
+        
+        void modify(int x, int l, int r, int ll, int rr, const T &v, int type) {
+            if (ll <= l && r <= rr) {
+                tree[x].apply(l, r, v, type);
+                return;
+            }
+            int y = (l + r) >> 1;
+            int z = x + ((y - l + 1) << 1);
+            push(x, l, r);
+            if (ll <= y) modify(x + 1, l, y, ll, rr, v, type);
+            if (rr > y) modify(z, y + 1, r, ll, rr, v, type);
+            pull(x, z);
+        }
 
         node get(int x, int l, int r, int ll, int rr) {
-            if (ll <= l && r <= rr) {
-                return tree[x];
-            }
+            if (ll <= l && r <= rr) return tree[x];
             int y = (l + r) >> 1;
             int z = x + ((y - l + 1) << 1);
             push(x, l, r);
@@ -80,20 +129,7 @@ class segtree {
             return res;
         }
         
-        template<typename T>
-        void modify(int x, int l, int r, int ll, int rr, const T &v) {
-            if (ll <= l && r <= rr) {
-                tree[x].apply(l, r, v);
-                return;
-            }
-            int y = (l + r) >> 1;
-            int z = x + ((y - l + 1) << 1);
-            push(x, l, r);
-            if (ll <= y) modify(x + 1, l, y, ll, rr, v);
-            if (rr > y) modify(z, y + 1, r, ll, rr, v);
-            pull(x, z);
-        }
-
+        // TODO: lack organization
         int find_first_knowingly(int x, int l, int r, const function<bool(const node&)> &f) {
             if (l == r) {
                 return l;
@@ -151,42 +187,6 @@ class segtree {
             pull(x, z);
             return res;
         }
-    
-        segtree(int _n) : n(_n) {
-            assert(n > 0);
-            tree.resize(2 * n - 1);
-            build(0, 0, n - 1);
-        }
-
-        template<typename T>
-        segtree(const vector<T> &v) {
-            n = v.size();
-            assert(n > 0);
-            tree.resize(2 * n - 1);
-            build(0, 0, n - 1, v);
-        }
-
-        node get(int ll, int rr) {
-            assert(0 <= ll && ll <= rr && rr <= n - 1);
-            return get(0, 0, n - 1, ll, rr);
-        }
-
-        node get(int p) {
-            assert(0 <= p && p <= n - 1);
-            return get(0, 0, n - 1, p, p);
-        }
-
-        template<typename T>
-        void modify(int ll, int rr, const T &v) {
-            assert(0 <= ll && ll <= rr && rr <= n - 1);
-            modify(0, 0, n - 1, ll, rr, v);
-        }
-        
-        template<typename T>
-        void modify(int p, const T &v) {
-            assert(0 <= p && p <= n - 1);
-            modify(0, 0, n - 1, p, p, v);
-        }
 
         int find_first(int ll, int rr, const function<bool(const node&)> &f) {
             assert(0 <= ll && ll <= rr && rr <= n - 1);
@@ -201,31 +201,34 @@ class segtree {
 
 int main() {
     ios::sync_with_stdio(false);
-    cin.tie(0);
-    cout.tie(0);
-    int n, m;
-    cin >> n >> m;
-    vector<int> a(n);
+    cin.tie(nullptr);
+    int n, q;
+    cin >> n >> q >> MOD;
+    vector<long long> a(n);
     for (int i = 0; i < n; ++i) cin >> a[i];
-    segtree st(a);
-    while (m--) {
-        string op;
+    SegTree st(a);
+    while (q--) {
+        int op;
         cin >> op;
-        if (op[0] == 'Q') {
-            int l, r;
-            cin >> l >> r;
-            cout << st.get(l, r).val << endl;
-        } else if (op[0] == 'U') {
-            int p, v;
-            cin >> p >> v;
-            st.modify(p, v);
+        if (op == 1) {
+            int x, y;
+            long long k;
+            cin >> x >> y >> k;
+            --x, --y;
+            k %= MOD;
+            st.modify(x, y, k, 0);
+        } else if (op == 2) {
+            int x, y;
+            long long k;
+            cin >> x >> y >> k;
+            --x, --y;
+            k %= MOD;
+            st.modify(x, y, k, 1);
         } else {
-            int x;
-            cin >> x;
-            int p = st.find_first(0, n - 1, [&](const segtree::node &nd) {
-                return nd.val <= x;
-            });
-            cout << p << endl;
+            int x, y;
+            cin >> x >> y;
+            --x, --y;
+            cout << st.get(x, y) << endl;
         }
     }
     return 0;
