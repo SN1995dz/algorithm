@@ -2,17 +2,9 @@
 
 using namespace std;
 
-template<typename T> class sparse_table {
+template<typename T> class SparseTable {
     public:
-        int n;
-        vector<vector<T>> f;
-        vector<vector<int>> g;
-
-        inline int LOG2(unsigned int x) {
-            return 31 - __builtin_clz(x);
-        }
-
-        sparse_table(const vector<T> &v) {
+        SparseTable(const vector<T> &v) {
             n = v.size();
             assert(n > 0);
             f.resize(n, vector<T>(LOG2(n) + 1));
@@ -34,35 +26,41 @@ template<typename T> class sparse_table {
             }
         }
 
-        T get(int l, int r) {
+        int get(int l, int r) {
             assert(0 <= l && l <= r && r < n);
             int k = LOG2(r - l + 1);
             if (f[l][k] < f[r - (1 << k) + 1][k]) return g[l][k];
             return g[r - (1 << k) + 1][k];
         }
+
+    private:
+        int n;
+        vector<vector<T>> f;
+        vector<vector<int>> g; // for argmin
+
+        inline int LOG2(unsigned int x) {
+            return 31 - __builtin_clz(x);
+        }
 };
 
 int main() {
     ios::sync_with_stdio(false);
-    cin.tie(0);
-    cout.tie(0);
-    int n, m;
-    cin >> n >> m;
-    vector<int> p(n);
+    cin.tie(nullptr);
+    int n, m, rt;
+    cin >> n >> m >> rt;
+    --rt;
     vector<vector<int>> G(n);
-    int rt = -1;
-    for (int i = 0; i < n; ++i) {
-        cin >> p[i];
-        if (p[i] == -1) {
-            rt = i;
-            continue;
-        }
-        G[p[i]].push_back(i);
+    for (int i = 0; i < n - 1; ++i) {
+        int x, y;
+        cin >> x >> y;
+        --x, --y;
+        G[x].push_back(y);
+        G[y].push_back(x);
     }
-    vector<int> fi(n);
+    vector<int> pos(n);
     vector<int> vs, depth;
     function<void(int, int, int)> dfs = [&](int u, int p, int d) {
-        fi[u] = vs.size();
+        pos[u] = vs.size();
         vs.push_back(u);
         depth.push_back(d);
         for (int i = 0; i < (int)G[u].size(); ++i) {
@@ -74,14 +72,15 @@ int main() {
         }
     };
     dfs(rt, -1, 0);
-    sparse_table<int> st(depth);
+    SparseTable<int> st(depth);
     auto lca = [&](int u, int v) {
-        return vs[st.get(min(fi[u], fi[v]), max(fi[u], fi[v]))];
+        return vs[st.get(min(pos[u], pos[v]), max(pos[u], pos[v]))];
     };
     while (m--) {
         int x, y;
         cin >> x >> y;
-        cout << lca(x, y) << endl;
+        --x, --y;
+        cout << lca(x, y) + 1 << endl;
     }
     return 0;
 }
