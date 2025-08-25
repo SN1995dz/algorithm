@@ -58,6 +58,12 @@ long long inv_mod(long long x, long long m) {
     return z.second;
 }
 
+// @return 'C(n, m) % p', p is small prime
+long long Lucus(long long n, long long m, long long p) {
+    if (m == 0) return 1;
+    return C(n % p, m % p, p) * Lucus(n / p, m / p, p) % p;
+}
+
 long long floor_div(long long a, long long b) {
     return a / b - ((a ^ b) < 0 && a % b != 0);
 }
